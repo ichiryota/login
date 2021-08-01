@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>こんにちは</title>
 </head>
 <body>
-	<div>こんにちは<span>th:each="login : ${Login}" th:text="${Login.name}"</span>さん</div>
+	<div>こんにちは<span th:each="login : ${Login}" th:text="${Login.name}"></span> さん</div>
 </body>
 </html>
