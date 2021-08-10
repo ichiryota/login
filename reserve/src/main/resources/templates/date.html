@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日付選択</title>
+<style>
+	table.calendarnext-title{
+		text-align:right;
+	}
+	.is-today{
+		background-color:#0000FF;
+		color:white;
+	}
+	td{
+		text-align: center;
+	}
+</style>
+</head>
+<body>
+<form>
+	<div>こんにちは<span th:each="name : ${name}" th:text="${name.uname}"></span>さん</div>
+	<h2 class="calendar-title"> <span id="js-month"></span></h2>
+		<table class="calendar-table">
+  			<thead>
+    			<tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr>
+  			</thead>
+  				<tbody id="js-calendar-body"></tbody>
+  		</table>
+  	<h2 class="calendarnext-title"><span id="js-nmonth"></span></h2>
+  		<table class="calendar-table">
+  			<thead>
+    			<tr><th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th></tr>
+  			</thead>
+  				<tbody id="js-calendar-next"></tbody>
+  		</table>
+  		
+  			
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	var $window = $(window);
+	var $year = $('#js-year');
+	var $month = $('#js-month');
+	var $nyear = $('#js-nyear');//翌月の年
+	var $nmonth = $('#js-nmonth');//翌月の月
+	var $tbody = $('#js-calendar-body');
+	
+	var $ntbody = $('#js-calendar-next');//翌月のカレンダー表示用のtbodyタグ変数に差し替え
+	var today = new Date();
+	var currentYear = today.getFullYear(),
+		currentMonth = today.getMonth();//今日の年月を取得
+		
+		$window.on('load',function(){
+	  		calendarHeading(currentYear, currentMonth,0);//見出しに取得した年月の情報を関数に渡す
+	  		calendarBody(currentYear, currentMonth, today);
+	  		calendarHeading(currentYear,currentMonth+1,1);//翌月分
+	  		calendarBody(currentYear,currentMonth+1,today);//翌月分
+		});
+		
+	function calendarBody(year, month, today){
+  		var todayYMFlag = today.getFullYear() === year && today.getMonth() === month ? true : false; // 本日の年と月が表示されるカレンダーと同じか判定
+  		var startDate = new Date(year, month, 1); // その月の最初の日の情報
+  		var endDate  = new Date(year, month + 1 , 0); // その月の最後の日の情報
+  		var startDay = startDate.getDay();// その月の最初の日(1日)の曜日を取得
+  		var endDay = endDate.getDate();// その月の最後の日の曜日を取得
+  		var textSkip = true; // 日にちを埋める用のフラグ(true:その月に該当しない false:その月に該当)
+  		var textDate = 1; // 日付
+  		var tableBody =''; // テーブルのHTMLを格納する変数
+  		for (var row = 0; row < 6; row++){//
+    		var tr = '<tr>';
+   	 		for (var col = 0; col < 7; col++) {
+      			if (row === 0 && startDay === col){//1行目の1日を格納する場所かどうか(col=0:日曜日 col=6:土曜日)
+        			textSkip = false;//その月の1日より後の部分に日付を格納する
+      			}
+      			if (textDate > endDay) {//末日を過ぎる
+        			textSkip = true;//その月の末日より後の部分に日付を格納しない
+     	 		}
+      			var addClass = todayYMFlag && textDate === today.getDate() ? 'is-today' : '';//
+      			var textTd = textSkip ? ' ' : textDate++;//日付をtextTdに代入し、次の日に進め、textskipがfalseなら空白を代入
+      			var td = '<td class="'+addClass+'">'+textTd+'</td>';//日付か空白か表示
+      			tr += td;//64行目の内容代入
+   	 		}
+    		tr += '</tr>';//trタグの終了
+    		tableBody += tr;//サイトで表示させるようにする
+  		}
+  		if(todayYMFlag===true){//今月のカレンダーである
+  			$tbody.html(tableBody);//HTMLのtbodyタグで表示
+  		}
+  		else if(todayYMFlag===false){//来月のカレンダーである
+  			$ntbody.html(tableBody);//HTMLのtbodyタグで表示
+  		}
+	}
+	
+	function calendarHeading(year, month,n){//変数nは今月のカレンダーを表示する場合は0、翌月のカレンダーを表示する場合は1を代入
+		nmonth =month;
+		nyear =year;
+		if(n===0){
+  			$year.text(year);
+  			$month.text(month + 1);
+		}
+		else if(n===1){
+			$nyear.text(nyear);
+			$nmonth.text(nmonth+1);
+		}
+	}
+	
+	
+	/*
+	var $window2=($window);
+	var $nyear = $('#js-nyear');//翌月の年
+	var $nmonth = $('#js-nmonth');//翌月の月
+	var $ntbody = $('#js-calendar-next');//翌月のカレンダー表示用のtbodyタグ変数に差し替え
+	$window2.on('load',function(){
+  		calendarHeadingnext(currentYear, currentMonth+1);
+  		calendarBodynext(currentYear, currentMonth+1, today);
+	});
+	function calendarBodynext(nyear, nmonth, today){
+  		var todayYMFlag = today.getFullYear() === nyear && today.getMonth() === nmonth ? true : false; // 本日の年と月が表示されるカレンダーと同じか判定
+  		var startDate = new Date(nyear, nmonth, 1); // その月の最初の日の情報
+  		var endDate  = new Date(nyear, nmonth + 1 , 0); // その月の最後の日の情報
+  		var startDay = startDate.getDay();// その月の最初の日(1日)の曜日を取得
+  		var endDay = endDate.getDate();// その月の最後の日の曜日を取得
+  		var textSkip = true; // 日にちを埋める用のフラグ(true:その月に該当しない false:その月に該当)
+  		var textDate = 1; // 日付
+  		var tableBody =''; // テーブルのHTMLを格納する変数
+  		for (var row = 0; row < 6; row++){//
+    		var tr = '<tr>';
+   	 		for (var col = 0; col < 7; col++) {
+      			if (row === 0 && startDay === col){//1行目の1日を格納する場所かどうか(col=0:日曜日 col=6:土曜日)
+        			textSkip = false;//その月の1日より後の部分に日付を格納する
+      			}
+      			if (textDate > endDay) {//末日を過ぎる
+        			textSkip = true;//その月の末日より後の部分に日付を格納しない
+     	 		}
+      			var addClass = todayYMFlag && textDate === today.getDate() ? 'is-today' : '';//
+      			var textTd = textSkip ? ' ' : textDate++;//日付をtextTdに代入し、次の日に進め、textskipがfalseなら空白を代入
+      			var td = '<td class="'+addClass+'">'+textTd+'</td>';//日付か空白か表示
+      			tr += td;//107行目の内容代入
+   	 		}
+    		tr += '</tr>';//trタグの終了
+    		tableBody += tr;//サイトで表示させるようにする
+  		}
+  		$ntbody.html(tableBody);//HTMLのtbodyタグで表示
+	}
+	
+	function calendarHeadingnext(nyear, nmonth){
+  		$nyear.text(nyear);
+  		$nmonth.text(nmonth + 1);
+	}*/
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.room.reserve.loginmapper.Loginmapper">
+  <select id="selectAll"  parameterType="com.room.reserve.login.Login" resultType="com.room.reserve.login.Login">
+  	select * from login_name where name = #{name} and pass = #{pass}
+  </select>
+</mapper>

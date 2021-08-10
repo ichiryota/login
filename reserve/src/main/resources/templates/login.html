@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>login</title>
+<style>
+	table.center{
+		margin-left: auto; 
+  		margin-right: auto;
+	}
+</style>
+</head>
+<body onload="myFunction()">
+<form method="post" th:action="@{/check}">
+	<div style="text-align: center">
+		<font color="red"><span id="msg" th:text="${message}"></span></font>
+		<table class="center">
+			<tr style="text-align:left">
+    			<td><label for="name" class="login">ユーザ名</label></td>
+    		</tr>
+    		<tr>
+    			<td><input type="text" id="name" name="name" th:value="${name.name}"></td>
+    			
+    		</tr>
+    		<tr style="text-align:left">
+    			<td><label for="pass" class="passwd">パスワード</label></td>
+    		</tr>
+    		<tr>
+    			<td><input type="password" id="pass" name="pass" th:value="${name.pass}"></td>
+			</tr>
+		</table>
+		<input type="submit" value="ログイン">
+	</div>
+</form>
+<script  type="text/javascript">
+	function myFunction() {
+		var msg = document.getElementById("msg").innerHTML;
+		console.log(msg);
+		if(msg !== ""){
+			document.getElementById("pass").select();
+		}
+	}
+</script>
+	<!--<form method="post" th:each="name : ${name}">
+  	<input type="text" name="name1" th:value="${name.name}"/>
+    <input type="text" name="name2" th:value="${name.pass}"/>
+    <input type="text" name="name3" th:value="${name.uname}"/>
+</form>-->
+</body>
+</html>
